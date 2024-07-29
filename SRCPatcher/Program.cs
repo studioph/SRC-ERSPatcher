@@ -3,6 +3,7 @@ using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Skyrim;
 using Noggog;
+using Synthesis.Utils.Quests;
 
 namespace SRCPatcher
 {
@@ -34,12 +35,12 @@ namespace SRCPatcher
             var affectedQuests = srcErsEsp.Mod.Quests;
             var srcFormList = srcErsEsp.Mod.FormLists.Where(formList => formList.EditorID is not null)
                 .Single(formList => formList.EditorID!.Equals("SRC_ERSList"));
-            var condition = QuestAliasConditionPatcher.FindCondition(affectedQuests.First(), condition => condition.Data.Reference.Equals(srcFormList));
+            var condition = QuestAliasConditionUtil.FindAliasCondition(affectedQuests.First(), condition => condition.Data.Reference.Equals(srcFormList));
             if (condition is null){
                 Console.WriteLine($"Unable to find SRC ERS condition in quest aliases, aborting");
                 return;
             }
-            var patcher = new QuestAliasConditionPatcher(condition);
+            var patcher = new QuestAliasConditionUtil(condition);
             patcher.PatchAll(affectedQuests, state);
         }
     }
