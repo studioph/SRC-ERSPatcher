@@ -1,0 +1,5 @@
+# SRC-ERS Patcher
+
+Synthesis patcher for [Skyrim Realistic Conquering](https://www.nexusmods.com/skyrimspecialedition/mods/26396), specifically the [exclude from radiant system](https://www.nexusmods.com/skyrimspecialedition/mods/41881) add-on. The patcher forwards the formlist condition that ERS adds to radiant quests to ensure subsequent quests are not assigned to a cleared location. This patcher is intended to allow SRC to work alongside quest mods such as [At Your Own Pace](https://www.nexusmods.com/skyrimspecialedition/mods/52704) and [Quests are in Skyrim](https://www.nexusmods.com/skyrimspecialedition/mods/18416), which also edit radiant quests, without having to make complex combination patches manually for all affected quests.
+
+Run this patcher in the same group as other patchers that also modify quests.
