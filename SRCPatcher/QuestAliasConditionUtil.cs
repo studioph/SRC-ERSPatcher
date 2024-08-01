@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Synthesis;
@@ -41,13 +42,14 @@ namespace Synthesis.Utils.Quests
         }
 
         // Patches the quest by adding the condition to relevant aliases
-        private void PatchQuestAliases(IQuestGetter quest, IEnumerable<uint> aliases)
+        private void PatchQuestAliases(IQuest quest, IEnumerable<uint> aliases)
         {
-            Console.WriteLine($"Patching quest: {quest.FormKey}");
+            Console.WriteLine($"Patching quest: {quest.EditorID}");
+            var aliasMap = quest.Aliases.ToImmutableDictionary(alias => alias.ID);
             foreach(var aliasId in aliases)
             {
-                var alias = quest.Aliases[(int)aliasId];
-                alias.Conditions.Append(this.Condition.DeepCopy());
+                var alias = aliasMap[aliasId];
+                alias.Conditions.Add(Condition.DeepCopy());
                 Console.WriteLine($"Added condition to alias: {alias.Name}");
             }
         }
