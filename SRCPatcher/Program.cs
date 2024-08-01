@@ -1,7 +1,8 @@
+using CommandLine;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Plugins;
-using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Skyrim;
+using Mutagen.Bethesda.Synthesis;
 using Noggog;
 using Synthesis.Utils.Quests;
 
@@ -11,11 +12,10 @@ namespace SRCPatcher
     {
         private static readonly ModKey SRC_ERS = ModKey.FromNameAndExtension("SRC_ERS.esp");
 
-
         public static async Task<int> Main(string[] args)
         {
-            return await SynthesisPipeline.Instance
-                .AddPatch<ISkyrimMod, ISkyrimModGetter>(RunPatch)
+            return await SynthesisPipeline
+                .Instance.AddPatch<ISkyrimMod, ISkyrimModGetter>(RunPatch)
                 .SetTypicalOpen(GameRelease.SkyrimSE, "SRCPatcher.esp")
                 .AddRunnabilityCheck(state =>
                 {
@@ -33,10 +33,20 @@ namespace SRCPatcher
             }
 
             var affectedQuests = srcErsEsp.Mod.Quests;
-            var srcFormList = srcErsEsp.Mod.FormLists.Where(formList => formList.EditorID is not null)
+            var srcFormList = srcErsEsp
+                .Mod.FormLists.Where(formList => formList.EditorID is not null)
                 .Single(formList => formList.EditorID!.Equals("SRC_ERSList"));
-            var condition = QuestAliasConditionUtil.FindAliasCondition(affectedQuests.First(), condition => condition.Data.Reference.Equals(srcFormList));
-            if (condition is null){
+
+            var condition = QuestAliasConditionUtil.FindAliasCondition(
+                affectedQuests.First(),
+                condition =>
+                    condition.Data.Function == Condition.Function.GetInCurrentLocFormList
+                    && condition
+                        .Data.Cast<IGetInCurrentLocFormListConditionDataGetter>()
+                        .FormList.Link.Equals(srcFormList.ToLinkGetter())
+            );
+            if (condition is null)
+            {
                 Console.WriteLine($"Unable to find SRC ERS condition in quest aliases, aborting");
                 return;
             }
