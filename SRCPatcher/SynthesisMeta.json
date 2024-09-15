@@ -1,13 +1,14 @@
 {
   "Nickname": "SRC ERS Patcher",
-  "Visibility": "Include",
-  "OneLineDescription": "Forwards changes from Skyrim Realistic Conquering Exclude from Radiant System",
-  "LongDescription": "- Forwards the FormList condition from SRC ERS to winning quest records",
+  "Visibility": "Visible",
+  "OneLineDescription": "Forwards changes from Skyrim Realistic Conquering - Exclude from Radiant System",
+  "LongDescription": "- forwards the FormList condition from SRC ERS to winning quest records so that radiant quests aren't assigned to a cleared location",
   "PreferredAutoVersioning": "Default",
   "RequiredMods": [
     "SRC_ERS.esp"
   ],
   "TargetedReleases": [
-    "SkyrimSE"
+    "SkyrimSE",
+    "SkyrimSEGog"
   ]
 }
