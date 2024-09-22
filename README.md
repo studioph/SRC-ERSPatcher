@@ -19,6 +19,6 @@ Please include the following to help me help you:
 ## Examples:
 **Note** that xEdit tends to show conflicts with lists like conditions, even if they contain the same items. What's important is that the condition is present in the winning record as marked in the screenshots. In a future update I might add logic to try and place the condition in the same spot in the list, but there's no gaurantee that will remove the visual conflicts in xedit.
 
-![Example showing SRC being overwritten by Dawnguard Tweaks and Enhancements and the patcher forwarding the condition](/example.jpg)
+![Example showing SRC being overwritten by Dawnguard Tweaks and Enhancements and the patcher forwarding the condition](/examples/example.jpg)
 
-![Example showing SRC being overwritten by At Your Own Pace and the patcher forwarding the condition](/example2.jpg)
+![Example showing SRC being overwritten by At Your Own Pace and the patcher forwarding the condition](/examples/example2.jpg)
