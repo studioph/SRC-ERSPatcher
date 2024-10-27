@@ -10,11 +10,11 @@ using Synthesis.Util.Quest;
 
 namespace SRCPatcher
 {
-    public static class PluginLoader<TMod, TModGetter>
+    public class PluginLoader<TMod, TModGetter>
         where TMod : class, IMod, TModGetter
         where TModGetter : class, IModGetter
     {
-        private static readonly IDictionary<
+        private readonly IDictionary<
             PluginData,
             Func<IPatcherState<TMod, TModGetter>, TModGetter, PatcherPluginBase<TMod, TModGetter>>
         > _registry =
@@ -27,18 +27,18 @@ namespace SRCPatcher
                 >
             >();
 
-        public static ImmutableArray<PluginData> RegisteredPlugins
+        public ImmutableArray<PluginData> RegisteredPlugins
         {
             get => [.. _registry.Keys];
         }
 
-        public static void Register<TPlugin>(
+        public void Register<TPlugin>(
             Func<IPatcherState<TMod, TModGetter>, TModGetter, TPlugin> factory
         )
             where TPlugin : PatcherPluginBase<TMod, TModGetter>, IPatcherPlugin =>
             _registry.Add(TPlugin.Data, factory);
 
-        public static ImmutableArray<PatcherPluginBase<TMod, TModGetter>> Scan(
+        public ImmutableArray<PatcherPluginBase<TMod, TModGetter>> Scan(
             IPatcherState<TMod, TModGetter> state
         )
         {
@@ -84,9 +84,6 @@ namespace SRCPatcher
 
         public abstract void Run();
     }
-
-    internal sealed record ERSPluginData(ModKey ModKey, Func<IQuestAliasGetter, bool> Evaluator)
-        : PluginData(ModKey);
 
     internal abstract class ERSPlugin(
         ISkyrimModGetter mod,

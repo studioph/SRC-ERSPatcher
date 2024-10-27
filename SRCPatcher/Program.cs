@@ -11,16 +11,15 @@ namespace SRCPatcher
     public class Program
     {
         private static Lazy<QuestPatcherPipeline> _pluginPipeline = null!;
+        private static readonly PluginLoader<ISkyrimMod, ISkyrimModGetter> _loader = new();
 
         static Program()
         {
-            PluginLoader<ISkyrimMod, ISkyrimModGetter>.Register(
-                (state, mod) => new MissivesPlugin(mod, state, _pluginPipeline.Value)
-            );
-            PluginLoader<ISkyrimMod, ISkyrimModGetter>.Register(
+            _loader.Register((state, mod) => new MissivesPlugin(mod, state, _pluginPipeline.Value));
+            _loader.Register(
                 (state, mod) => new NoticeBoardPlugin(mod, state, _pluginPipeline.Value)
             );
-            PluginLoader<ISkyrimMod, ISkyrimModGetter>.Register(
+            _loader.Register(
                 (state, mod) => new BountyHunterPlugin(mod, state, _pluginPipeline.Value)
             );
         }
@@ -44,7 +43,7 @@ namespace SRCPatcher
             );
 
             var ersMod = state.LoadOrder.GetIfEnabledAndExists(SRC_ERS.ModKey);
-            var loadedPlugins = PluginLoader<ISkyrimMod, ISkyrimModGetter>.Scan(state);
+            var loadedPlugins = _loader.Scan(state);
             var patcher = new QuestAliasConditionForwarder(SRC_ERS.Condition);
             var pipeline = new QuestForwarderPipeline(state.PatchMod);
 
