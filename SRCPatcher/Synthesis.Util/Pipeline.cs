@@ -80,6 +80,12 @@ namespace Synthesis.Util
                     item.Winning.WithPatchingData(patcher.Analyze(item.Source, item.Winning.Record))
                 )
                 .Where(result => patcher.ShouldPatch(result.Values));
+
+        public void Run<TValue>(
+            IForwardPatcher<TMajor, TMajorGetter, TValue> patcher,
+            IEnumerable<ForwardRecordContext<TMod, TModGetter, TMajor, TMajorGetter>> records
+        )
+            where TValue : notnull => PatchRecords(patcher, GetRecordsToPatch(patcher, records));
     }
 
     /// <summary>
@@ -108,6 +114,12 @@ namespace Synthesis.Util
             records
                 .Where(context => patcher.Filter(context.Record))
                 .Select(context => context.WithPatchingData(patcher.Apply(context.Record)));
+
+        public void Run<TValue>(
+            ITransformPatcher<TMajor, TMajorGetter, TValue> patcher,
+            IEnumerable<IModContext<TMod, TModGetter, TMajor, TMajorGetter>> records
+        )
+            where TValue : notnull => PatchRecords(patcher, GetRecordsToPatch(patcher, records));
     }
 
     /// <summary>
@@ -138,5 +150,11 @@ namespace Synthesis.Util
             where TValue : notnull =>
             base.GetRecordsToPatch(patcher, records)
                 .Where(result => patcher.ShouldPatch(result.Values));
+
+        public void Run<TValue>(
+            IConditionalTransformPatcher<TMajor, TMajorGetter, TValue> patcher,
+            IEnumerable<IModContext<TMod, TModGetter, TMajor, TMajorGetter>> records
+        )
+            where TValue : notnull => PatchRecords(patcher, GetRecordsToPatch(patcher, records));
     }
 }

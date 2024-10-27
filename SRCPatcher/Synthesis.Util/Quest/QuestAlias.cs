@@ -75,31 +75,49 @@ namespace Synthesis.Util.Quest
         ) => quest.Aliases.Where(alias => alias.HasCondition(condition));
     }
 
-    /// <summary>
-    /// Patcher for adding a single condition to quest aliases
-    /// </summary>
-    /// <param name="condition">The condition to patch quest aliases with</param>
-    /// <param name="searchFunc">Optional search function to check if a quest aliases needs patching. Default is to check for the existance of the target condition</param>
-    public class QuestAliasConditionPatcher(
-        IConditionGetter condition,
-        Func<IConditionGetter, bool>? searchFunc = null
-    ) : IForwardPatcher<IQuest, IQuestGetter, IEnumerable<uint>>
+    public abstract class QuestAliasConditionPatcher(IConditionGetter condition)
+        : IPatcher<IQuest, IQuestGetter, IEnumerable<uint>>
     {
         /// <summary>
         /// The target condition to patch quest aliases with
         /// </summary>
         public readonly IConditionGetter Condition = condition;
 
-        /// <summary>
-        /// Optional search criteria to use when checking if a quest alias already contains the target condition, instead of checking for the whole condition object
-        /// </summary>
-        private readonly Func<IConditionGetter, bool>? _searchFunc = searchFunc;
-
         public readonly IDictionary<IQuestGetter, IList<IQuestAliasGetter>> PatchedRecords =
             new Dictionary<IQuestGetter, IList<IQuestAliasGetter>>();
 
         public int PatchedAliasCount =>
             PatchedRecords.Aggregate(0, (sum, next) => sum + next.Value.Count);
+
+        public void Patch(IQuest targetQuest, IEnumerable<uint> patchValues)
+        {
+            var aliasMap = targetQuest.Aliases.ToImmutableDictionary(alias => alias.ID);
+            foreach (var aliasId in patchValues)
+            {
+                var alias = aliasMap[aliasId];
+                alias.Conditions.Add(Condition.DeepCopy());
+                Console.WriteLine($"Added condition to alias: {alias.Name}");
+                PatchedRecords.GetOrAdd(targetQuest, () => []).Add(alias);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Patcher for forwarding a single condition to quest aliases
+    /// </summary>
+    /// <param name="condition">The condition to forward</param>
+    /// <param name="searchFunc">Optional search function to check if a quest aliases needs patching. Default is to check for the existance of the target condition</param>
+    public class QuestAliasConditionForwarder(
+        IConditionGetter condition,
+        Func<IConditionGetter, bool>? searchFunc = null
+    )
+        : QuestAliasConditionPatcher(condition),
+            IForwardPatcher<IQuest, IQuestGetter, IEnumerable<uint>>
+    {
+        /// <summary>
+        /// Optional search criteria to use when checking if a quest alias already contains the target condition, instead of checking for the whole condition object
+        /// </summary>
+        private readonly Func<IConditionGetter, bool>? _searchFunc = searchFunc;
 
         /// <summary>
         /// Gets the alias IDs of the quest aliases which contain the condition
@@ -114,23 +132,6 @@ namespace Synthesis.Util.Quest
                 : quest.GetAliasesWithCondition(Condition);
 
             return aliases.Select(alias => alias.ID);
-        }
-
-        /// <summary>
-        /// Patches the quest by adding the condition to relevant aliases
-        /// </summary>
-        /// <param name="quest"></param>
-        /// <param name="aliases"></param>
-        public void Patch(IQuest targetQuest, IEnumerable<uint> patchValues)
-        {
-            var aliasMap = targetQuest.Aliases.ToImmutableDictionary(alias => alias.ID);
-            foreach (var aliasId in patchValues)
-            {
-                var alias = aliasMap[aliasId];
-                alias.Conditions.Add(Condition.DeepCopy());
-                Console.WriteLine($"Added condition to alias: {alias.Name}");
-                PatchedRecords.GetOrAdd(targetQuest, () => []).Add(alias);
-            }
         }
 
         /// <summary>
