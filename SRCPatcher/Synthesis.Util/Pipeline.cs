@@ -1,5 +1,7 @@
+using System.Text;
 using Mutagen.Bethesda.Plugins.Cache;
 using Mutagen.Bethesda.Plugins.Records;
+using Noggog;
 
 namespace Synthesis.Util
 {
@@ -37,7 +39,12 @@ namespace Synthesis.Util
             PatchedCount++;
             if (target is IMajorRecord major)
             {
-                Console.WriteLine($"Patched {major.FormKey}({major.EditorID})");
+                var builder = new StringBuilder($"Patched {major.FormKey}");
+                if (!major.EditorID.IsNullOrWhitespace())
+                {
+                    builder.Append($":({major.EditorID})");
+                }
+                Console.WriteLine(builder.ToString());
             }
         }
 
