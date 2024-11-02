@@ -19,12 +19,15 @@ namespace SRCPatcher
     internal abstract class ERSPlugin(
         ISkyrimModGetter mod,
         Func<IQuestAliasGetter, bool> aliasFilter,
-        QuestPatcherPipeline pipeline
+        ConditionalTransformPatcherPipeline<ISkyrimMod, ISkyrimModGetter> pipeline
     ) : IPatcherPlugin<ISkyrimMod, ISkyrimModGetter>
     {
         protected readonly ISkyrimModGetter _mod = mod;
 
-        private readonly QuestPatcherPipeline _pipeline = pipeline;
+        private readonly ConditionalTransformPatcherPipeline<
+            ISkyrimMod,
+            ISkyrimModGetter
+        > _pipeline = pipeline;
 
         /// <summary>
         /// The patcher instance to use.
@@ -50,9 +53,10 @@ namespace SRCPatcher
     /// <summary>
     /// ERS Plugin for Missives
     /// </summary>
-    internal sealed class MissivesPlugin(ISkyrimModGetter mod, QuestPatcherPipeline pipeline)
-        : ERSPlugin(mod, ShouldHaveCondition, pipeline),
-            IPluginData
+    internal sealed class MissivesPlugin(
+        ISkyrimModGetter mod,
+        ConditionalTransformPatcherPipeline<ISkyrimMod, ISkyrimModGetter> pipeline
+    ) : ERSPlugin(mod, ShouldHaveCondition, pipeline), IPluginData
     {
         private static readonly ModKey Missives = ModKey.FromNameAndExtension("Missives.esp");
 
@@ -70,15 +74,16 @@ namespace SRCPatcher
             && alias.Conditions.Any()
             && (!alias.Name?.Equals("OtherHold") ?? true);
 
-        public static PluginData Data => new(Missives);
+        public static PluginData Data => new(nameof(MissivesPlugin), Missives);
     }
 
     /// <summary>
     /// ERS Plugin for Notice Board
     /// </summary>
-    internal sealed class NoticeBoardPlugin(ISkyrimModGetter mod, QuestPatcherPipeline pipeline)
-        : ERSPlugin(mod, ShouldHaveCondition, pipeline),
-            IPluginData
+    internal sealed class NoticeBoardPlugin(
+        ISkyrimModGetter mod,
+        ConditionalTransformPatcherPipeline<ISkyrimMod, ISkyrimModGetter> pipeline
+    ) : ERSPlugin(mod, ShouldHaveCondition, pipeline), IPluginData
     {
         private static readonly ModKey NoticeBoard = ModKey.FromNameAndExtension(
             "notice board.esp"
@@ -108,7 +113,7 @@ namespace SRCPatcher
         private static bool ShouldHaveCondition(IQuestAliasGetter alias) =>
             alias.Type == QuestAlias.TypeEnum.Location && alias.HasCondition(HasAvoidFormList);
 
-        public static PluginData Data => new(NoticeBoard);
+        public static PluginData Data => new(nameof(NoticeBoardPlugin), NoticeBoard);
     }
 
     /// <summary>
@@ -116,9 +121,10 @@ namespace SRCPatcher
     ///
     /// Note that the few base game quests that BH touches are already handled by the main forwarding patcher
     /// </summary>
-    internal sealed class BountyHunterPlugin(ISkyrimModGetter mod, QuestPatcherPipeline pipeline)
-        : ERSPlugin(mod, ShouldHaveCondition, pipeline),
-            IPluginData
+    internal sealed class BountyHunterPlugin(
+        ISkyrimModGetter mod,
+        ConditionalTransformPatcherPipeline<ISkyrimMod, ISkyrimModGetter> pipeline
+    ) : ERSPlugin(mod, ShouldHaveCondition, pipeline), IPluginData
     {
         private static readonly ModKey BountyHunter = ModKey.FromNameAndExtension(
             "BountyHunter.esp"
@@ -134,6 +140,6 @@ namespace SRCPatcher
         private static bool ShouldHaveCondition(IQuestAliasGetter alias) =>
             alias.Type == QuestAlias.TypeEnum.Location && alias.Conditions.Any();
 
-        public static PluginData Data => new(BountyHunter);
+        public static PluginData Data => new(nameof(BountyHunterPlugin), BountyHunter);
     }
 }

@@ -13,7 +13,7 @@ namespace SRCPatcher
         /// <summary>
         /// Patcher pipeline for plugin instances. Lazy so that it doesn't get created if no plugins are loaded
         /// </summary>
-        private static Lazy<QuestPatcherPipeline> _pluginPipeline = null!;
+        private static Lazy<SkyrimConditionalPipeline> _pluginPipeline = null!;
 
         /// <summary>
         /// Loader instance to register plugins with
@@ -52,15 +52,15 @@ namespace SRCPatcher
         {
             // Add factory for lazy pipeline creation
             // Can't be done before here since it relies on patch mod
-            _pluginPipeline = new Lazy<QuestPatcherPipeline>(
-                () => new QuestPatcherPipeline(state.PatchMod)
+            _pluginPipeline = new Lazy<SkyrimConditionalPipeline>(
+                () => new SkyrimConditionalPipeline(state.PatchMod)
             );
 
             // Load ERS mod and any optional plugins in user's load order
             var ersMod = state.LoadOrder.GetIfEnabledAndExists(SRC_ERS.ModKey);
             var loadedPlugins = _loader.Scan(state.LoadOrder);
             var patcher = new QuestAliasConditionForwarder(SRC_ERS.Condition);
-            var pipeline = new QuestForwarderPipeline(state.PatchMod);
+            var pipeline = new SkyrimForwardPipeline(state.PatchMod);
 
             // Patch base ERS mod
             var forwardContexts = ersMod.Quests.Select(quest =>
