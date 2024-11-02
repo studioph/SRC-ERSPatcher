@@ -75,6 +75,12 @@ namespace SRCPatcher
             {
                 plugin.Run(state);
             }
+
+            uint totalPatched = _pluginPipeline.IsValueCreated
+                ? _pluginPipeline.Value.PatchedCount + pipeline.PatchedCount
+                : pipeline.PatchedCount;
+
+            Console.WriteLine($"Patched {totalPatched} total records");
         }
     }
 
