@@ -1,6 +1,7 @@
 using System.Text;
 using Mutagen.Bethesda.Plugins.Cache;
 using Mutagen.Bethesda.Plugins.Records;
+using Mutagen.Bethesda.Skyrim;
 using Noggog;
 
 namespace Synthesis.Util
@@ -167,4 +168,15 @@ namespace Synthesis.Util
             where TMajorGetter : IMajorRecordQueryableGetter
             where TValue : notnull => PatchAll(patcher, GetRecordsToPatch(patcher, records));
     }
+
+    // Scoped pipelines per-game
+
+    public class SkyrimForwardPipeline(ISkyrimMod patchMod)
+        : ForwardPatcherPipeline<ISkyrimMod, ISkyrimModGetter>(patchMod);
+
+    public class SkyrimTransformPipeline(ISkyrimMod patchMod)
+        : TransformPatcherPipeline<ISkyrimMod, ISkyrimModGetter>(patchMod);
+
+    public class SkyrimConditionalPipeline(ISkyrimMod patchMod)
+        : ConditionalTransformPatcherPipeline<ISkyrimMod, ISkyrimModGetter>(patchMod);
 }

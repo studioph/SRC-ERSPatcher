@@ -29,8 +29,14 @@ namespace Synthesis.Util
     /// <summary>
     /// Basic plugin information
     /// </summary>
-    /// <param name="ModKey">The modkey for the mod the plugin is associated with</param>
-    public readonly record struct PluginData(ModKey ModKey);
+    /// <param name="Name">The name of the plugin</param>
+    /// <param name="Sentinal">The modkey to check the load order for to determine whether to load the plugin</param>
+    /// <param name="Target">The modkey for the mod whose data the plugin will be using. In most cases this will be the same as Sentinal</param>
+    public readonly record struct PluginData(string Name, ModKey Sentinal, ModKey Target)
+    {
+        public PluginData(string name, ModKey sentinal, ModKey? target = null)
+            : this(name, sentinal, target ?? sentinal) { }
+    };
 
     /// <summary>
     /// Interface for a plugin implementation that declares its own PluginData
@@ -105,10 +111,19 @@ namespace Synthesis.Util
 
             foreach (var (pluginData, factory) in _registry)
             {
-                if (loadOrder.TryGetIfEnabledAndExists(pluginData.ModKey, out var found))
+                if (loadOrder.ModExists(pluginData.Sentinal, enabled: true))
                 {
-                    // The mod used by the plugin exists in the user's load order, load the plugin
-                    loaded.Add(factory(found));
+                    if (loadOrder.TryGetIfEnabledAndExists(pluginData.Target, out var found))
+                    {
+                        // The mod used by the plugin exists in the user's load order, load the plugin
+                        loaded.Add(factory(found));
+                    }
+                    else
+                    {
+                        Console.WriteLine(
+                            $"WARNING: Found {pluginData.Sentinal} in load order, but not {pluginData.Target} used by plugin: {pluginData.Name}, skipping"
+                        );
+                    }
                 }
                 // The mod used by the plugin was not in the load order, skip
             }
