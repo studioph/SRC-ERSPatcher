@@ -41,10 +41,6 @@ namespace SRCPatcher
             return await SynthesisPipeline
                 .Instance.AddPatch<ISkyrimMod, ISkyrimModGetter>(RunPatch)
                 .SetTypicalOpen(GameRelease.SkyrimSE, "SRCPatcher.esp")
-                .AddRunnabilityCheck(state =>
-                {
-                    state.LoadOrder.AssertListsMod(SRC_ERS.ModKey, $"Missing {SRC_ERS.ModKey}");
-                })
                 .Run(args);
         }
 
