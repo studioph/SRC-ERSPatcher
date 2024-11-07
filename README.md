@@ -4,6 +4,10 @@ Synthesis patcher for [Skyrim Realistic Conquering](https://www.nexusmods.com/sk
 
 ## Usage
 - Add to your Synthesis pipeline using the patcher browser
+- In addition to the base game, the patcher will automatically detect and patch the following radiant quest mods:
+  - Missives
+  - Notice Board
+  - Bounty Hunter
 - If you have multiple Synthesis groups, run this patcher in the same group as other patchers that also modify quests to ensure changes are merged properly.
 - The patcher will log which quests and aliases it forwarded the condition to. These can be viewed in the Synthesis log files or in the UI itself.
 
@@ -19,6 +23,17 @@ Please include the following to help me help you:
 ## Examples:
 **Note** that xEdit tends to show conflicts with lists like conditions, even if they contain the same items. What's important is that the condition is present in the winning record as marked in the screenshots. In a future update I might add logic to try and place the condition in the same spot in the list, but there's no guarantee that will remove the visual conflicts in xedit.
 
-![Example showing SRC being overwritten by Dawnguard Tweaks and Enhancements and the patcher forwarding the condition](/examples/example.jpg)
+<details>
+  <summary> Base game</summary>
 
-![Example showing SRC being overwritten by At Your Own Pace and the patcher forwarding the condition](/examples/example2.jpg)
+  ![Dawnguard Tweaks and Enhancements](/examples/example1.jpg)
+  ![At Your Own Pace](/examples/example2.jpg)
+</details>
+
+<details>
+  <summary>Radiant quest mods</summary>
+
+  ![Missives](/examples/missives.jpg)
+  ![Notice Board](/examples/noticeboard.jpg)
+  ![BountyHunter](/examples/bountyhunter.jpg)
+</details>
